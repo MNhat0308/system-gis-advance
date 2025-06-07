@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Validation\Rules\Password;
 
 class UserResource extends Resource
 {
@@ -30,11 +31,18 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('roles')
+                    ->relationship('roles','name',)
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
-                    ->maxLength(255),
+                    ->dehydrateStateUsing(fn($state) => \Hash::make($state))
+                    ->visible(fn($livewire) => $livewire instanceof CreateUser)
+                    ->rule(Password::default()),
             ]);
     }
 
@@ -46,6 +54,7 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('roles.name'),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
