@@ -1,5 +1,9 @@
-import { LinearInterpolator } from "deck.gl";
-
+import {
+    Globe, // Satellite
+    Map as MapIcon, // Streets
+    Moon,
+    Sun,
+} from 'lucide-react';
 
 const BASE_VIEW = {
     latitude: 10.832699491799959,
@@ -27,9 +31,27 @@ const BBOX = {
     sw: [106.95816468872187, 10.271504776048417],
 };
 
-export {
-    BASE_VIEW,
-    BASE_ZOOM,
-    REG_BREAKLINE,
-    BBOX,
-};
+const BASEMAPS = [
+    {
+        label: 'Light',
+        style: 'mapbox://styles/mapbox/light-v11',
+        icon: Sun,
+    },
+    {
+        label: 'Dark',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        icon: Moon,
+    },
+    {
+        label: 'Satellite',
+        style: 'mapbox://styles/mapbox/satellite-v9',
+        icon: Globe,
+    },
+    {
+        label: 'Streets',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        icon: MapIcon,
+    },
+];
+
+export { BASE_VIEW, BASE_ZOOM, BASEMAPS, BBOX, REG_BREAKLINE };
