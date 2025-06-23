@@ -6,7 +6,6 @@ import {
     SlidersHorizontal,
     X,
 } from 'lucide-react';
-import { useState } from 'react';
 
 const tabs = [
     { key: 'Info', label: 'Info', icon: Info },
@@ -14,11 +13,17 @@ const tabs = [
     { key: 'Filters', label: 'Filters', icon: SlidersHorizontal },
 ];
 
-const Sidebar = ({ infoData = null, legendData = null, filters = null }) => {
-    const [isOpen, setIsOpen] = useState(true);
-    const [isExpanded, setIsExpanded] = useState(true);
-    const [activeTab, setActiveTab] = useState('Info');
-
+const Sidebar = ({
+    isOpen,
+    setIsOpen,
+    isExpanded,
+    setIsExpanded,
+    activeTab,
+    setActiveTab,
+    infoData,
+    legendData,
+    filters,
+}) => {
     const toggleOpen = () => setIsOpen(!isOpen);
 
     const toggleExpand = () => {
@@ -63,15 +68,14 @@ const Sidebar = ({ infoData = null, legendData = null, filters = null }) => {
 
     return (
         <div
-            className={`absolute right-0 top-0 z-50 flex h-full flex-col bg-white shadow-lg transition-all duration-300 ${
-                isExpanded ? 'w-72' : 'w-16'
-            }`}
+            className={`absolute right-0 top-0 z-40 flex h-full flex-col overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out will-change-transform ${isExpanded ? 'w-72' : 'w-16'}`}
         >
             {/* Header */}
             <div className="flex items-center justify-between border-b p-2">
                 {isExpanded && (
                     <h2 className="text-base font-semibold">Sidebar</h2>
                 )}
+
                 <div className="ml-auto flex gap-2">
                     <button
                         onClick={toggleExpand}

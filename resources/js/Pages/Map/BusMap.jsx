@@ -10,21 +10,23 @@ import { useRef, useState } from 'react';
 import { Map } from 'react-map-gl/mapbox';
 
 export default function BusMap() {
-    const [popupInfo, setPopupInfo] = useState(null);
     const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
     const [baseMapStyle, setBaseMapStyle] = useState(
         'mapbox://styles/mapbox/light-v11',
     );
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarExpanded, setSidebarExpanded] = useState(true);
+    const [activeTab, setActiveTab] = useState('Info');
+    const [infoData, setInfoData] = useState(null);
 
     const deckRef = useRef();
     const handleClick = (info) => {
-        if (info.object) {
-            setPopupInfo({
-                coordinates: info.coordinate,
-                properties: info.object.properties,
-            });
-        } else {
-            setPopupInfo(null);
+        console.log(info);
+        if (info?.object) {
+            setInfoData(info.object.properties);
+            setSidebarOpen(true);
+            setSidebarExpanded(true);
+            setActiveTab('Info');
         }
     };
 
@@ -34,18 +36,6 @@ export default function BusMap() {
     };
 
     const layers = [pathLayers(path, handleClick, hoveredFeatureId)];
-
-    const project = (lngLat) => {
-        const deck = deckRef.current?.deck;
-        if (!deck) return null;
-
-        const viewport = deck.viewManager?.getViewports()[0];
-        return viewport?.project(lngLat); // Returns [x, y]
-    };
-
-    const screenCoords = popupInfo?.coordinates
-        ? project(popupInfo.coordinates)
-        : null;
 
     return (
         <>
@@ -66,9 +56,13 @@ export default function BusMap() {
             </DeckGL>
 
             <Sidebar
-                infoData={popupInfo?.properties}
-                // legendData={<LegendComponent />}
-                // filters={<FiltersComponent />}
+                isOpen={sidebarOpen}
+                setIsOpen={setSidebarOpen}
+                isExpanded={sidebarExpanded}
+                setIsExpanded={setSidebarExpanded}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                infoData={infoData}
             />
 
             <BaseMapSwitcher

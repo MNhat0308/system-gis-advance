@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@types/mapbox-gl": "^3.4.1",
+        "@uidotdev/usehooks": "^2.4.1",
         "deck.gl": "^9.1.12",
         "lucide-react": "^0.522.0",
         "mapbox-gl": "^3.12.0",
