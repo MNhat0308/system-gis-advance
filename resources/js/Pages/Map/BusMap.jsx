@@ -12,6 +12,8 @@ import { Map } from 'react-map-gl/mapbox';
 
 export default function BusMap() {
     const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
     const [baseMapStyle, setBaseMapStyle] = useState(
         'mapbox://styles/mapbox/light-v11',
     );
@@ -34,27 +36,23 @@ export default function BusMap() {
         const featureId = info.object?.properties?.id || null;
         setHoveredFeatureId(featureId);
     };
-    const pointLayer = (
-        <PointMarkersLayer
-            data={[path]}
-            iconAtlas="/assets/bus.png"
-            iconMapping={{
-                bus: {
-                    x: 0,
-                    y: 0,
-                    width: 64,
-                    height: 64,
-                    anchorY: 64,
-                    mask: true,
-                },
-            }}
-            sizeScale={10}
-        />
-    );
+    const iconLayer = PointMarkersLayer({
+        data: path,
+        pickable: true,
+        onClick: ({ object }) => console.log('Clicked', object),
+        onHover: ({ object }) => {
+            if (object) {
+                setHoveredIndex(object.properties.pointIndex);
+            } else {
+                setHoveredIndex(null);
+            }
+        },
+        hoveredIndex,
+    });
 
     const pathLayer = pathLayers(path, handleClick, hoveredFeatureId);
 
-    const layers = [pathLayer];
+    const layers = [pathLayer, iconLayer];
 
     return (
         <>

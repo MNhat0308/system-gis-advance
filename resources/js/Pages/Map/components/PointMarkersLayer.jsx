@@ -1,50 +1,46 @@
-// components/PointMarkersLayer.jsx
-
 import { extractPointsFromGeoJSON } from '@/Utils/mapHelper.js';
-import { IconLayer } from 'deck.gl';
-
-/**
- * Reusable ScatterplotLayer to mark each point of LineStrings in a GeoJSON
- *
- * @param {Object} props
- * @param {Object} props.data - GeoJSON FeatureCollection with LineStrings
- * @param {Array} props.color - RGB array, default [0, 0, 255]
- * @param {number} props.radius - Radius in meters, default 20
- * @param {Function} props.onClick - Optional click handler
- */
+import { IconLayer } from '@deck.gl/layers';
 
 const iconMapping = {
-    bus: {
-        x: 0,
-        y: 0,
-        width: 64,
-        height: 64,
-        anchorY: 64,
-        mask: true,
-    },
+    bus: { x: 0, y: 0, width: 64, height: 64, mask: true },
 };
 
-const PointMarkersLayer = ({
+export default function PointMarkersLayer({
     data,
-    iconAtlas = '/icons/bus.png',
-    iconMapping,
-    sizeScale = 10,
-    onClick,
-}) => {
-    const points = extractPointsFromGeoJSON(data); // same as before
+    icon = 'bus',
+    size = 10,
+    sizeScale = 4,
+    color = [255, 99, 71],
+    iconAtlas = '/assets/images/bus.png',
+    hoveredIndex = null,
+    ...others
+}) {
+    const points = extractPointsFromGeoJSON(data).map((point, id) => ({
+        ...point,
+        icon,
+        id,
+    }));
 
     return new IconLayer({
-        id: 'bus-stop-icons',
-        data: points.map((p) => ({ ...p, icon: 'bus' })),
+        id: `icon-layer-${icon}`,
+        data: points,
+        pickable: true,
         iconAtlas,
         iconMapping,
         getIcon: (d) => d.icon,
-        sizeScale,
-        getPosition: (d) => d.coordinates,
-        getSize: 5,
-        getColor: [0, 0, 0],
-        pickable: true,
-        onClick,
+        getPosition: (d) => {
+            const [lng, lat] = d.coordinates;
+            return [lng, lat + 0.00005]; // slight upward offset
+        },
+        sizeScale: sizeScale,
+        getSize: (d) =>
+            d.properties.pointIndex === hoveredIndex ? size * 2 : size,
+        getColor: (d) =>
+            d.properties.pointIndex === hoveredIndex ? [255, 150, 50] : color,
+        updateTriggers: {
+            getSize: [hoveredIndex],
+            getColor: [hoveredIndex],
+        },
+        ...others,
     });
-};
-export default PointMarkersLayer;
+}
