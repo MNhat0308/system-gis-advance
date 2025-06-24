@@ -68,7 +68,7 @@ const Sidebar = ({
 
     return (
         <div
-            className={`absolute right-0 top-0 z-40 flex h-full flex-col overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out will-change-transform ${isExpanded ? 'w-72' : 'w-16'}`}
+            className={`absolute left-0 top-0 z-40 flex h-full flex-col overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out will-change-transform ${isExpanded ? 'w-72' : 'w-16'}`}
         >
             {/* Header */}
             <div className="flex items-center justify-between border-b p-2">
@@ -83,9 +83,9 @@ const Sidebar = ({
                         title="Expand/Collapse"
                     >
                         {isExpanded ? (
-                            <ChevronsRight size={18} />
-                        ) : (
                             <ChevronsLeft size={18} />
+                        ) : (
+                            <ChevronsRight size={18} />
                         )}
                     </button>
                     <button

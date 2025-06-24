@@ -3,7 +3,7 @@ import { BASEMAPS } from '@/Pages/Map/config/index.js';
 const BaseMapSwitcher = ({
     currentStyle,
     onChange,
-    positionClass = 'bottom-4 left-4',
+    positionClass = 'bottom-4 left-15',
 }) => {
     return (
         <div
