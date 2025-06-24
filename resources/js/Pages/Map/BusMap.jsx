@@ -1,4 +1,5 @@
 import BaseMapSwitcher from '@/Pages/Map/components/BaseMapSwitcher.jsx';
+import PointMarkersLayer from '@/Pages/Map/components/PointMarkersLayer.jsx';
 import Sidebar from '@/Pages/Map/components/Sidebar.jsx';
 import { BASE_VIEW } from '@/Pages/Map/config/index.js';
 import { pathLayers } from '@/Pages/Map/layers/pathLayers.js';
@@ -21,7 +22,6 @@ export default function BusMap() {
 
     const deckRef = useRef();
     const handleClick = (info) => {
-        console.log(info);
         if (info?.object) {
             setInfoData(info.object.properties);
             setSidebarOpen(true);
@@ -34,8 +34,27 @@ export default function BusMap() {
         const featureId = info.object?.properties?.id || null;
         setHoveredFeatureId(featureId);
     };
+    const pointLayer = (
+        <PointMarkersLayer
+            data={[path]}
+            iconAtlas="/assets/bus.png"
+            iconMapping={{
+                bus: {
+                    x: 0,
+                    y: 0,
+                    width: 64,
+                    height: 64,
+                    anchorY: 64,
+                    mask: true,
+                },
+            }}
+            sizeScale={10}
+        />
+    );
 
-    const layers = [pathLayers(path, handleClick, hoveredFeatureId)];
+    const pathLayer = pathLayers(path, handleClick, hoveredFeatureId);
+
+    const layers = [pathLayer];
 
     return (
         <>
