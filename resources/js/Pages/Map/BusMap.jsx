@@ -5,7 +5,7 @@ import Sidebar from '@/Pages/Map/components/Sidebar.jsx';
 import { BASE_VIEW } from '@/Pages/Map/config/index.js';
 import { pathLayers } from '@/Pages/Map/layers/pathLayers.js';
 import { path } from '@/Pages/Map/mock-data/path.js';
-import { VITE_MAPBOX_TOKEN,VITE_APP_NAME } from '@/Utils/configGlobal.js';
+import { VITE_APP_NAME, VITE_MAPBOX_TOKEN } from '@/Utils/configGlobal.js';
 import { DeckGL, ZoomWidget } from '@deck.gl/react';
 import { Head } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
@@ -53,6 +53,7 @@ export default function BusMap() {
         setHoveredFeatureId(featureId);
     };
     const iconLayer = PointMarkersLayer({
+        size: 15,
         data: path,
         pickable: true,
         onClick: ({ object }) => console.log('Clicked', object),
@@ -68,7 +69,7 @@ export default function BusMap() {
 
     const pathLayer = pathLayers(path, handleClick, hoveredFeatureId);
 
-    const layers = [pathLayer, iconLayer];
+    const layers = [iconLayer];
 
     return (
         <>

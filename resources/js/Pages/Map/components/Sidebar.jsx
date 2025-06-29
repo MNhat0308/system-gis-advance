@@ -7,6 +7,7 @@ import {
     SlidersHorizontal,
     X,
 } from 'lucide-react';
+import FilterPanel from '@/Pages/Map/components/FilterPanel.jsx';
 
 const tabs = [
     { key: 'Info', label: 'Info', icon: Info },
@@ -47,7 +48,7 @@ const Sidebar = ({
             case 'Legend':
                 return <div>{legendData || 'Legend content goes here'}</div>;
             case 'Filters':
-                return <div>{filters || 'Filter UI goes here'}</div>;
+                return <FilterPanel filters={filters} />;
             default:
                 return null;
         }
@@ -72,12 +73,12 @@ const Sidebar = ({
 
             {/* Sidebar Panel */}
             <div
-                className={`absolute left-0 top-0 z-40 flex h-full flex-col overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out will-change-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${isExpanded ? 'w-72' : 'w-16'}`}
+                className={`absolute left-0 top-0 z-40 flex h-full flex-col overflow-hidden bg-white shadow-lg transition-all duration-300 ease-in-out will-change-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${isExpanded ? 'w-96' : 'w-16'}`}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between border-b p-2">
                     {isExpanded && (
-                        <h2 className="text-base font-semibold">Sidebar</h2>
+                        <h2 className="text-base font-semibold">Information</h2>
                     )}
 
                     <div className="ml-auto flex gap-2">
