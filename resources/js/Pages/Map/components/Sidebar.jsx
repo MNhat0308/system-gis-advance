@@ -7,7 +7,6 @@ import {
     SlidersHorizontal,
     X,
 } from 'lucide-react';
-import FilterPanel from '@/Pages/Map/components/FilterPanel.jsx';
 
 const tabs = [
     { key: 'Info', label: 'Info', icon: Info },
