@@ -13,11 +13,11 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useCallback, useRef, useState } from 'react';
 import { Map } from 'react-map-gl/mapbox';
 
-export default function BusMap() {
+export default function BusMap({ routes }) {
     const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [baseMapStyle, setBaseMapStyle] = useState(
-        'mapbox://styles/mapbox/light-v11',
+        'mapbox://styles/mapbox/light-v11'
     );
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -34,7 +34,7 @@ export default function BusMap() {
             longitude,
             zoom: 15,
             transitionDuration: 1000,
-            transitionEasing: BASE_VIEW.transitionEasing,
+            transitionEasing: BASE_VIEW.transitionEasing
         }));
     };
 
@@ -64,7 +64,7 @@ export default function BusMap() {
                 setHoveredIndex(null);
             }
         },
-        hoveredIndex,
+        hoveredIndex
     });
 
     const pathLayer = pathLayers(path, handleClick, hoveredFeatureId);
@@ -118,6 +118,7 @@ export default function BusMap() {
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
                             infoData={infoData}
+                            filtersData={routes}
                         />
                         <BaseMapSwitcher
                             currentStyle={baseMapStyle}

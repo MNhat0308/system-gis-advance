@@ -1,3 +1,4 @@
+import FilterPanel from '@/Pages/Map/components/FilterPanel.jsx';
 import {
     ChevronsLeft,
     ChevronsRight,
@@ -23,7 +24,7 @@ const Sidebar = ({
     setActiveTab,
     infoData,
     legendData,
-    filters,
+    filtersData,
 }) => {
     const toggleOpen = () => setIsOpen(!isOpen);
     const toggleExpand = () => {
@@ -47,7 +48,7 @@ const Sidebar = ({
             case 'Legend':
                 return <div>{legendData || 'Legend content goes here'}</div>;
             case 'Filters':
-                return <FilterPanel filters={filters} />;
+                return <FilterPanel listItems={filtersData} />;
             default:
                 return null;
         }
