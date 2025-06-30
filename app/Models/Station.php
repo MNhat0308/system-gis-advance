@@ -22,14 +22,4 @@ class Station extends Model
             'location' => 'string',
         ];
     }
-
-    public function routeStations()
-    {
-        return $this->hasMany(RouteStation::class);
-    }
-
-    public function routes()
-    {
-        return $this->belongsToMany(Route::class, 'route_stations')->withTimestamps();
-    }
 }

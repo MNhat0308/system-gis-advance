@@ -24,4 +24,14 @@ class RouteVariant extends Model
             'is_outbound' => 'boolean',
         ];
     }
+
+    public function schedule(): \Illuminate\Database\Eloquent\Relations\HasMany|RouteVariant
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function stops()
+    {
+        return $this->hasMany(Stop::class);
+    }
 }

@@ -14,4 +14,9 @@ class Stop extends Model
         'station_id',
         'order',
     ];
+
+    public function stations()
+    {
+        return $this->belongsToMany(Station::class);
+    }
 }
