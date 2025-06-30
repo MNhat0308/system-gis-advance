@@ -5,21 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Station extends Model
+class Schedule extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'address',
-        'zone',
-        'location',
+        'route_variant_id',
+        'start_date',
+        'end_date',
+        'priority',
     ];
 
     protected function casts(): array
     {
         return [
-            'location' => 'string',
+            'start_date' => 'date',
+            'end_date' => 'date',
         ];
     }
 }

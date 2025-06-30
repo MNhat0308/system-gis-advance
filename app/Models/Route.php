@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\BusType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Route extends Model
@@ -15,6 +17,7 @@ class Route extends Model
         'description',
         'is_active',
         'path',
+        'type',
     ];
 
     protected function casts(): array
@@ -22,26 +25,12 @@ class Route extends Model
         return [
             'is_active' => 'boolean',
             'path' => 'string',
+            'type' => BusType::class
         ];
     }
 
-    public function routeStations()
+    public function routeVariants(): HasMany
     {
-        return $this->hasMany(RouteStation::class);
-    }
-
-    public function stations()
-    {
-        return $this->belongsToMany(Station::class, 'route_stations')->withTimestamps();
-    }
-
-    public function trips()
-    {
-        return $this->hasMany(Trip::class);
-    }
-
-    public function buses()
-    {
-        return $this->hasMany(Bus::class, 'assigned_route_id');
+        return $this->hasMany(RouteVariant::class);
     }
 }
