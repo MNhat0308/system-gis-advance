@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\routeVariantResource\Pages;
-use App\Models\routeVariant;
+use App\Models\RouteVariant;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class routeVariantResource extends Resource
 {
-    protected static ?string $model = routeVariant::class;
+    protected static ?string $model = RouteVariant::class;
 
     protected static ?string $slug = 'route-variants';
 
@@ -55,11 +55,11 @@ class routeVariantResource extends Resource
 
                 Placeholder::make('created_at')
                     ->label('Created Date')
-                    ->content(fn(?routeVariant $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?RouteVariant $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
                 Placeholder::make('updated_at')
                     ->label('Last Modified Date')
-                    ->content(fn(?routeVariant $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                    ->content(fn(?RouteVariant $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 
