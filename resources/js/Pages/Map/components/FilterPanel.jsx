@@ -1,17 +1,17 @@
+import RouteDetail from '@/Pages/Map/components/DetailRoute.jsx';
+import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from '@inertiajs/react';
-import { Bus, ChevronDown, ChevronUp, Filter, Search } from 'lucide-react';
+import { Bus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import RouteDetail from '@/Pages/Map/components/DetailRoute.jsx';
-import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 
 // Default values
 const DEFAULT_FILTERS = {
     search: '',
     email: '',
-    phone: '',
+    radius: '',
     username: '',
     status: '',
 };
@@ -19,7 +19,20 @@ const DEFAULT_FILTERS = {
 const filterSchema = z.object({
     search: z.string().max(50, 'Max 50 characters').optional(),
     email: z.string().email('Invalid email').optional().or(z.literal('')),
-    phone: z.string().regex(/^\d*$/, 'Numbers only').optional(),
+    radius: z
+        .string()
+        .trim()
+        .refine((val) => val === '' || /^\d+$/.test(val), {
+            message: 'Numbers only',
+        })
+        .transform((val) => {
+            if (val === '') return undefined;
+            return parseInt(val, 10);
+        })
+        .refine((val) => val === undefined || (val > 0 && val < 1000), {
+            message: 'Radius must be between 1 and 999',
+        })
+        .optional(),
     username: z.string().optional(),
     status: z.enum(['', 'active', 'inactive']),
 });
@@ -32,8 +45,14 @@ const inputClass = (hasError) =>
     }`;
 
 const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
-    const { selectedRoute, setSelectedRoute } = useAppContext();
-    const [showFilters, setShowFilters] = useState(true);
+    const {
+        selectedRoute,
+        setSelectedRoute,
+        showFilters,
+        setShowFilters,
+        setSelectedVariant,
+        setSelectedPathLine,
+    } = useAppContext();
     const [searchQuery, setSearchQuery] = useState('');
     const [loadingDetail, setLoadingDetail] = useState(false);
 
@@ -93,12 +112,14 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
     };
 
     const handleBackToList = () => {
+        setSelectedVariant(null);
+        setSelectedPathLine(null);
         setSelectedRoute(null);
     };
 
     return (
         <div className="flex h-full flex-col overflow-hidden">
-            {/* Filter Section (Fixed) */}
+            {/*
             <div className="shrink-0 space-y-6 p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-700">
@@ -121,7 +142,7 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                     </button>
                 </div>
 
-                {/* Form */}
+
                 <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${
                         showFilters
@@ -135,7 +156,7 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                             className="space-y-4"
                         >
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                {/* Search */}
+
                                 <div>
                                     <label className="mb-1 block text-sm font-medium">
                                         Search
@@ -152,7 +173,6 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                                     )}
                                 </div>
 
-                                {/* Email */}
                                 <div>
                                     <label className="mb-1 block text-sm font-medium">
                                         Email
@@ -169,24 +189,23 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                                     )}
                                 </div>
 
-                                {/* Phone */}
+
                                 <div>
                                     <label className="mb-1 block text-sm font-medium">
-                                        Phone
+                                        Radius
                                     </label>
                                     <input
-                                        {...register('phone')}
-                                        placeholder="Phone..."
-                                        className={inputClass(errors.phone)}
+                                        {...register('radius')}
+                                        placeholder="radius"
+                                        className={inputClass(errors.radius)}
                                     />
-                                    {errors.phone && (
+                                    {errors.radius && (
                                         <p className="mt-1 text-xs text-red-600">
-                                            {errors.phone.message}
+                                            {errors.radius.message}
                                         </p>
                                     )}
                                 </div>
 
-                                {/* Username */}
                                 <div>
                                     <label className="mb-1 block text-sm font-medium">
                                         Username
@@ -203,7 +222,7 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                                     )}
                                 </div>
 
-                                {/* Status */}
+
                                 <div className="sm:col-span-2">
                                     <label className="mb-1 block text-sm font-medium">
                                         Status
@@ -226,13 +245,20 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                                 </div>
                             </div>
 
-                            {/* Buttons */}
+
                             <div className="sticky bottom-0 flex flex-col gap-2 bg-white pt-4 sm:flex-row sm:justify-end">
                                 <button
                                     type="submit"
                                     className="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
                                 >
                                     Apply Filters
+                                </button>
+                                <button
+                                    type="button"
+                                    // onClick={handleReset}
+                                    className="rounded bg-gray-200 px-4 py-2 text-sm text-gray-800 hover:bg-gray-300"
+                                >
+                                    Find Nearest
                                 </button>
                                 <button
                                     type="button"
@@ -245,18 +271,21 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                         </form>
                     </div>
                 </div>
-            </div>
 
+            </div>
+            */}
             {/* Scrollable List Section */}
             <div className="flex-1 overflow-y-auto border-t border-gray-200 p-4">
                 {selectedRoute ? (
                     <>
-                        <button
-                            onClick={handleBackToList}
-                            className="mb-4 rounded bg-gray-200 px-4 py-2 text-sm text-gray-800 hover:bg-gray-300"
-                        >
-                            ← Back to List
-                        </button>
+                        <div className="flex items-center justify-center">
+                            <button
+                                onClick={handleBackToList}
+                                className="mb-4 rounded bg-gray-200 px-4 py-2 text-sm text-gray-800 hover:bg-gray-300"
+                            >
+                                ← Back to List
+                            </button>
+                        </div>
 
                         {loadingDetail ? (
                             <p className="text-sm text-gray-500">Loading...</p>

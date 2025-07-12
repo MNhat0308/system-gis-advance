@@ -10,3 +10,5 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('route/{routeId}', [MapController::class, 'showRoute'])->name('api.routes.show');
+
+Route::get('stations/nearby', [MapController::class, 'findNearbyStations'])->name('api.stations.nearby');

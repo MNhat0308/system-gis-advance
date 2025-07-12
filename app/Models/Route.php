@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BusType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Route extends Model
@@ -36,5 +37,10 @@ class Route extends Model
     public function routeVariants(): HasMany
     {
         return $this->hasMany(RouteVariant::class);
+    }
+
+    public function routeDetails(): HasOne
+    {
+        return $this->hasOne(DetailRoute::class);
     }
 }
