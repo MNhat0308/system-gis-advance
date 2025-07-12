@@ -4,6 +4,8 @@ import { Bus, ChevronDown, ChevronUp, Filter, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import RouteDetail from '@/Pages/Map/components/DetailRoute.jsx';
+import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 
 // Default values
 const DEFAULT_FILTERS = {
@@ -30,8 +32,10 @@ const inputClass = (hasError) =>
     }`;
 
 const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
+    const { selectedRoute, setSelectedRoute } = useAppContext();
     const [showFilters, setShowFilters] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [loadingDetail, setLoadingDetail] = useState(false);
 
     const filteredItems = listItems.filter((item) => {
         const query = searchQuery.toLowerCase();
@@ -73,6 +77,23 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                 replace: true,
             },
         );
+    };
+
+    const handleItemClick = async (item) => {
+        const { id } = item;
+        setLoadingDetail(true);
+        try {
+            const { data } = await axios.get(route('api.routes.show', id));
+            setSelectedRoute(data);
+        } catch (err) {
+            console.error('Failed to fetch user detail', err);
+        } finally {
+            setLoadingDetail(false);
+        }
+    };
+
+    const handleBackToList = () => {
+        setSelectedRoute(null);
     };
 
     return (
@@ -228,55 +249,75 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
 
             {/* Scrollable List Section */}
             <div className="flex-1 overflow-y-auto border-t border-gray-200 p-4">
-                <h3 className="mb-3 flex items-center justify-between text-base font-semibold text-gray-700">
-                    <span>Matching Results</span>
-                    <span className="text-sm font-normal text-gray-500">
-                        {filteredItems.length} result
-                        {filteredItems.length !== 1 && 's'}
-                    </span>
-                </h3>
+                {selectedRoute ? (
+                    <>
+                        <button
+                            onClick={handleBackToList}
+                            className="mb-4 rounded bg-gray-200 px-4 py-2 text-sm text-gray-800 hover:bg-gray-300"
+                        >
+                            ← Back to List
+                        </button>
 
-                {/* Search input */}
-                <div className="relative mb-4">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Search by name, code, or type..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded border border-gray-300 bg-white px-9 py-2 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                </div>
-
-                {/* Filtered results */}
-                {filteredItems.length > 0 ? (
-                    <div className="cursor-pointer space-y-3">
-                        {filteredItems.map((item) => (
-                            <div
-                                key={item.id}
-                                className="flex items-center gap-4 rounded border border-gray-100 bg-gray-50 p-4 shadow-sm"
-                            >
-                                <div className="flex items-center justify-center">
-                                    <Bus className="h-6 w-6 text-blue-500" />
-                                </div>
-                                <div className="flex flex-col text-sm text-gray-700">
-                                    <div className="text-base font-medium">
-                                        {item.name}
-                                    </div>
-                                    <div className="text-sm text-gray-500">
-                                        Code: {item.code}
-                                    </div>
-                                    <div className="text-sm text-gray-500">
-                                        Type: {item.type}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                        {loadingDetail ? (
+                            <p className="text-sm text-gray-500">Loading...</p>
+                        ) : (
+                            <RouteDetail route={selectedRoute} />
+                        )}
+                    </>
                 ) : (
-                    <p className="text-sm text-gray-500">
-                        No items to display.
-                    </p>
+                    <>
+                        <h3 className="mb-3 flex items-center justify-between text-base font-semibold text-gray-700">
+                            <span>Matching Results</span>
+                            <span className="text-sm font-normal text-gray-500">
+                                {filteredItems.length} result
+                                {filteredItems.length !== 1 && 's'}
+                            </span>
+                        </h3>
+
+                        {/* Search input */}
+                        <div className="relative mb-4">
+                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search by name, code, or type..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full rounded border border-gray-300 bg-white px-9 py-2 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                        </div>
+
+                        {/* Filtered results */}
+                        {filteredItems.length > 0 ? (
+                            <div className="cursor-pointer space-y-3">
+                                {filteredItems.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        onClick={() => handleItemClick(item)}
+                                        className="flex cursor-pointer items-center gap-4 rounded border border-gray-100 bg-gray-50 p-4 shadow-sm"
+                                    >
+                                        <div className="flex items-center justify-center">
+                                            <Bus className="h-6 w-6 text-blue-500" />
+                                        </div>
+                                        <div className="flex flex-col text-sm text-gray-700">
+                                            <div className="text-base font-medium">
+                                                {item.name}
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                Code: {item.code}
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                Type: {item.type}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500">
+                                No items to display.
+                            </p>
+                        )}
+                    </>
                 )}
             </div>
         </div>

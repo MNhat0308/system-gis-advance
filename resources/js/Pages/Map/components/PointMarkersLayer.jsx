@@ -1,4 +1,4 @@
-import { extractPointsFromGeoJSON } from '@/Utils/mapHelper.js';
+import { extractPointsFromStations } from '@/Utils/mapHelper';
 import { IconLayer } from '@deck.gl/layers';
 
 const iconMapping = {
@@ -15,7 +15,7 @@ export default function PointMarkersLayer({
     hoveredIndex = null,
     ...others
 }) {
-    const points = extractPointsFromGeoJSON(data).map((point, id) => ({
+    const points = extractPointsFromStations(data || []).map((point, id) => ({
         ...point,
         icon,
         id,
@@ -30,9 +30,9 @@ export default function PointMarkersLayer({
         getIcon: (d) => d.icon,
         getPosition: (d) => {
             const [lng, lat] = d.coordinates;
-            return [lng, lat + 0.00005]; // slight upward offset
+            return [lng, lat + 0.00005]; // slight offset so icon doesn't overlap path line
         },
-        sizeScale: sizeScale,
+        sizeScale,
         getSize: (d) =>
             d.properties.pointIndex === hoveredIndex ? size * 2 : size,
         getColor: (d) =>

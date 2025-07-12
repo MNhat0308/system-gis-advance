@@ -25,9 +25,13 @@ class Route extends Model
         return [
             'is_active' => 'boolean',
             'path' => 'string',
-            'type' => BusType::class
+            'type' => BusType::class,
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
     }
+
+    protected $hidden = ['deleted_at'];
 
     public function routeVariants(): HasMany
     {

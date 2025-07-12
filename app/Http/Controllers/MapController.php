@@ -3,7 +3,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RouteResource;
 use App\Models\Route;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class MapController extends Controller
@@ -16,5 +18,15 @@ class MapController extends Controller
             'routes' => $routes->map->only(['id', 'name', 'code', 'type']),
         ]);
 
+    }
+
+    public function showRoute(Request $request, $routeId)
+    {
+        $route = Route::with([
+            "routeVariants.schedules.trips",
+            "routeVariants.stops.station"
+        ])->findOrFail($routeId);
+
+        return new RouteResource($route);
     }
 }

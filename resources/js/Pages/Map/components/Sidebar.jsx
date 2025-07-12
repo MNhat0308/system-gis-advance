@@ -104,18 +104,25 @@ const Sidebar = ({
                 </div>
 
                 {/* Tabs */}
-                <div className="flex flex-col border-b">
+                <div
+                    className={`flex ${isExpanded ? 'w-full flex-row border-b' : 'w-16 flex-col'} bg-white`}
+                >
                     {tabs.map(({ key, label, icon: Icon }) => {
                         const isActive = activeTab === key;
+
                         return (
-                            <div key={key} className="group relative">
+                            <div key={key} className="group relative flex-1">
                                 <button
                                     onClick={() => setActiveTab(key)}
-                                    className={`flex w-full items-center gap-2 px-3 py-3 text-sm transition-colors duration-200 ${isActive ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'} `}
+                                    className={`flex w-full transition-all duration-200 ${
+                                        isExpanded
+                                            ? 'flex-row items-center justify-center gap-2 px-4 py-3'
+                                            : 'h-20 flex-col items-center justify-center'
+                                    } text-sm ${isActive ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'} `}
                                 >
                                     <Icon
                                         size={18}
-                                        className={` ${isExpanded ? '' : 'mx-auto'} ${isActive ? 'text-blue-600' : 'text-gray-600'} transition-colors duration-200 group-hover:text-blue-500`}
+                                        className={`transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-600'} group-hover:text-blue-500`}
                                     />
                                     {isExpanded && (
                                         <span className="group-hover:text-blue-500">
@@ -124,7 +131,7 @@ const Sidebar = ({
                                     )}
                                 </button>
 
-                                {/* Tooltip only when collapsed */}
+                                {/* Tooltip when collapsed */}
                                 {!isExpanded && (
                                     <div className="pointer-events-none absolute left-full top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white opacity-0 shadow transition-opacity duration-200 group-hover:opacity-100">
                                         {label}

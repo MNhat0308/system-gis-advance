@@ -23,4 +23,11 @@ class Schedule extends Model
             'end_date' => 'date',
         ];
     }
+
+    protected $hidden = ['deleted_at'];
+
+    public function trips()
+    {
+        return $this->hasMany(ScheduleTrips::class);
+    }
 }

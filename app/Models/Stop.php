@@ -15,8 +15,10 @@ class Stop extends Model
         'order',
     ];
 
-    public function stations()
+    protected $hidden = ['deleted_at'];
+
+    public function station()
     {
-        return $this->belongsToMany(Station::class);
+        return $this->belongsTo(Station::class);
     }
 }
