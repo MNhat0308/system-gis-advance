@@ -18,6 +18,8 @@ class RouteVariantResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'schedules' => ScheduleResource::collection($this->whenLoaded('schedules')),
+            'is_outbound' => $this->is_outbound,
             'stops' => StopResource::collection($this->whenLoaded('stops')),
+            'location' => $this->geojson,
         ];
     }}

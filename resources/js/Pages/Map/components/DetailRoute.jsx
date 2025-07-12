@@ -1,7 +1,9 @@
+import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 import { useState } from 'react';
 
 const RouteDetail = ({ route }) => {
     const [activeTab, setActiveTab] = useState(route.route_variants[0]?.id);
+    const { setSelectedVariant, setSelectedPathLine } = useAppContext();
 
     const variant = route.route_variants.find((v) => v.id === activeTab);
 
@@ -24,6 +26,18 @@ const RouteDetail = ({ route }) => {
         };
     });
 
+    const handleTabChange = (variant) => {
+
+        setActiveTab(variant?.id);
+        setSelectedVariant(
+            Array.isArray(variant?.stops) ? [...variant.stops] : [],
+        );
+
+        setSelectedPathLine(
+            variant?.location
+        );
+    };
+
     return (
         <div className="mx-auto max-w-2xl space-y-4 p-4">
             {/* Tabs */}
@@ -31,7 +45,7 @@ const RouteDetail = ({ route }) => {
                 {route.route_variants.map((variant) => (
                     <button
                         key={variant.id}
-                        onClick={() => setActiveTab(variant.id)}
+                        onClick={() => handleTabChange(variant)}
                         className={`rounded px-4 py-2 font-medium ${
                             activeTab === variant.id
                                 ? 'bg-teal-500 text-white'

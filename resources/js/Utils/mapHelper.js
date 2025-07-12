@@ -1,21 +1,19 @@
-const extractPointsFromGeoJSON = (geojson) => {
-    const points = [];
+export const extractPointsFromStations = (stations = []) => {
+    return (stations || []).map((item, index) => {
+        const { id, order, station } = item;
+        const { id: stationId, name, location } = station || {};
+        const coordinates = location?.coordinates || [0, 0];
 
-    geojson.features.forEach((feature, index) => {
-        if (feature.geometry.type === 'LineString') {
-            feature.geometry.coordinates.forEach((coord, i) => {
-                points.push({
-                    coordinates: coord,
-                    properties: {
-                        featureIndex: index,
-                        pointIndex: i,
-                    },
-                });
-            });
-        }
+        return {
+            coordinates,
+            properties: {
+                id,
+                order,
+                featureIndex: index,
+                stationId,
+                name,
+                pointIndex: index,
+            },
+        };
     });
-
-    return points;
 };
-
-export { extractPointsFromGeoJSON };

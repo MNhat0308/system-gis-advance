@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import RouteDetail from '@/Pages/Map/components/DetailRoute.jsx';
+import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 
 // Default values
 const DEFAULT_FILTERS = {
@@ -31,9 +32,9 @@ const inputClass = (hasError) =>
     }`;
 
 const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
+    const { selectedRoute, setSelectedRoute } = useAppContext();
     const [showFilters, setShowFilters] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedRoute, setSelectedRoute] = useState(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
 
     const filteredItems = listItems.filter((item) => {
@@ -92,7 +93,6 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
     };
 
     const handleBackToList = () => {
-        console.log('FilterPanel.jsx | 94',selectedRoute);
         setSelectedRoute(null);
     };
 

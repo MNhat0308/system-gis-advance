@@ -3,21 +3,22 @@ import GpsButton from '@/Pages/Map/components/GpsButton.jsx';
 import PointMarkersLayer from '@/Pages/Map/components/PointMarkersLayer.jsx';
 import Sidebar from '@/Pages/Map/components/Sidebar.jsx';
 import { BASE_VIEW } from '@/Pages/Map/config/index.js';
-import { pathLayers } from '@/Pages/Map/layers/pathLayers.js';
-import { path } from '@/Pages/Map/mock-data/path.js';
+import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 import { VITE_APP_NAME, VITE_MAPBOX_TOKEN } from '@/Utils/configGlobal.js';
 import { DeckGL, ZoomWidget } from '@deck.gl/react';
 import { Head } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Map } from 'react-map-gl/mapbox';
+import { pathLayers } from '@/Pages/Map/layers/pathLayers.js';
 
 export default function BusMap({ routes }) {
+    const { selectedVariant, selectedPathLine } = useAppContext();
     const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [baseMapStyle, setBaseMapStyle] = useState(
-        'mapbox://styles/mapbox/light-v11'
+        'mapbox://styles/mapbox/light-v11',
     );
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -34,7 +35,7 @@ export default function BusMap({ routes }) {
             longitude,
             zoom: 15,
             transitionDuration: 1000,
-            transitionEasing: BASE_VIEW.transitionEasing
+            transitionEasing: BASE_VIEW.transitionEasing,
         }));
     };
 
@@ -52,24 +53,34 @@ export default function BusMap({ routes }) {
         const featureId = info.object?.properties?.id || null;
         setHoveredFeatureId(featureId);
     };
-    const iconLayer = PointMarkersLayer({
-        size: 15,
-        data: path,
-        pickable: true,
-        onClick: ({ object }) => console.log('Clicked', object),
-        onHover: ({ object }) => {
-            if (object) {
-                setHoveredIndex(object.properties.pointIndex);
-            } else {
-                setHoveredIndex(null);
-            }
-        },
-        hoveredIndex
-    });
 
-    const pathLayer = pathLayers(path, handleClick, hoveredFeatureId);
+    const pathLayer = useMemo(() => {
+        console.log('BusMap.jsx | 59', selectedPathLine);
+        if (!selectedPathLine || typeof selectedPathLine !== 'object')
+            return null;
+        return pathLayers(selectedPathLine);
+    }, [JSON.stringify(selectedPathLine)]);
 
-    const layers = [iconLayer];
+    const iconLayer = useMemo(() => {
+        if (!Array.isArray(selectedVariant) || selectedVariant.length === 0)
+            return null;
+        return PointMarkersLayer({
+            size: 15,
+            data: selectedVariant,
+            pickable: true,
+            onClick: ({ object }) => console.log('Clicked', object),
+            onHover: ({ object }) => {
+                if (object) {
+                    setHoveredIndex(object.properties.pointIndex);
+                } else {
+                    setHoveredIndex(null);
+                }
+            },
+            hoveredIndex,
+            getFillColor: (d) => [0, 0, 255],
+        });
+    }, [JSON.stringify(selectedVariant), hoveredIndex]);
+    const layers = iconLayer || pathLayer ? [iconLayer, pathLayer] : [];
 
     return (
         <>
