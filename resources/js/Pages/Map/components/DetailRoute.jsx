@@ -3,14 +3,11 @@ import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 import { data_get } from '@/Utils/globalHelper.js';
 import {
     Building2,
-    Clock,
-    Info, InfoIcon,
-    RefreshCcw,
+    InfoIcon,
     Route as RouteIcon,
-    Ruler, TicketIcon,
-    Users
+    StarIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const RouteDetail = ({ route }) => {
     const {
@@ -19,8 +16,15 @@ const RouteDetail = ({ route }) => {
         selectedStop,
         setSelectedStop,
         setViewState,
+        reviewLoading,
+        fetchReviews,
+        averageReview,
+        reviewList,
+        reviewError,
+        isLoadingMore,
+        loadMoreReviews,
     } = useAppContext();
-    console.log('DetailRoute.jsx | 15', route);
+
     const [activeTab, setActiveTab] = useState(route.route_variants[0]?.id);
     const [activeSubtab, setActiveSubtab] = useState('stops');
 
@@ -74,6 +78,12 @@ const RouteDetail = ({ route }) => {
 
         setSelectedStop(stop);
     };
+
+    useEffect(() => {
+        if (activeSubtab === 'review') {
+            fetchReviews(route.id);
+        }
+    }, [activeSubtab]);
 
     return (
         <div className="mx-auto max-w-2xl space-y-6 p-4">
@@ -208,62 +218,78 @@ const RouteDetail = ({ route }) => {
                                 Thông tin chi tiết tuyến xe
                             </div>
 
-                            {/* Inbound & Outbound Side-by-Side */}
                             <div className="space-y-4">
-                                {/* Chiều đi */}
                                 <div className="rounded-xl bg-gray-50 p-4 shadow-sm">
-                                    <div className="flex items-center gap-2 text-sm font-semibold text-teal-700 mb-2">
+                                    <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-teal-700">
                                         <RouteIcon className="h-4 w-4 text-teal-600" />
                                         Chiều đi
                                     </div>
                                     <p className="max-h-40 overflow-y-auto whitespace-pre-line text-sm text-gray-700">
-                                        {route.route_details.inbound_description}
+                                        {
+                                            route.route_details
+                                                .inbound_description
+                                        }
                                     </p>
                                 </div>
 
-                                {/* Chiều về */}
                                 <div className="rounded-xl bg-gray-50 p-4 shadow-sm">
-                                    <div className="flex items-center gap-2 text-sm font-semibold text-teal-700 mb-2">
+                                    <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-teal-700">
                                         <RouteIcon className="h-4 w-4 rotate-180 text-teal-600" />
                                         Chiều về
                                     </div>
                                     <p className="max-h-40 overflow-y-auto whitespace-pre-line text-sm text-gray-700">
-                                        {route.route_details.outbound_description}
+                                        {
+                                            route.route_details
+                                                .outbound_description
+                                        }
                                     </p>
                                 </div>
                             </div>
 
                             {/* Info Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-800">
+                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 md:grid-cols-3">
                                 <div className="rounded-lg bg-gray-50 p-3 shadow-sm">
-                                    <span className="block font-semibold text-teal-600">Số ghế</span>
+                                    <span className="block font-semibold text-teal-600">
+                                        Số ghế
+                                    </span>
                                     {route.route_details.number_of_seats}
                                 </div>
                                 <div className="rounded-lg bg-gray-50 p-3 shadow-sm">
-                                    <span className="block font-semibold text-teal-600">Khoảng cách</span>
-                                    {(route.route_details.distance / 1000).toFixed(1)} km
+                                    <span className="block font-semibold text-teal-600">
+                                        Khoảng cách
+                                    </span>
+                                    {(
+                                        route.route_details.distance / 1000
+                                    ).toFixed(1)}{' '}
+                                    km
                                 </div>
                                 <div className="rounded-lg bg-gray-50 p-3 shadow-sm">
-                                    <span className="block font-semibold text-teal-600">Thời gian chuyến</span>
+                                    <span className="block font-semibold text-teal-600">
+                                        Thời gian chuyến
+                                    </span>
                                     {route.route_details.time_of_trip} phút
                                 </div>
-                                <div className="rounded-lg bg-gray-50 p-3 shadow-sm col-span-2 md:col-span-1">
-                                    <span className="block font-semibold text-teal-600">Giờ hoạt động</span>
+                                <div className="col-span-2 rounded-lg bg-gray-50 p-3 shadow-sm md:col-span-1">
+                                    <span className="block font-semibold text-teal-600">
+                                        Giờ hoạt động
+                                    </span>
                                     {route.route_details.operation_time}
                                 </div>
-                                <div className="rounded-lg bg-gray-50 p-3 shadow-sm col-span-2 ">
-                                    <span className="block font-semibold text-teal-600">Số chuyến/ngày</span>
+                                <div className="col-span-2 rounded-lg bg-gray-50 p-3 shadow-sm">
+                                    <span className="block font-semibold text-teal-600">
+                                        Số chuyến/ngày
+                                    </span>
                                     {route.route_details.total_trip}
                                 </div>
                             </div>
 
                             {/* Operator Info */}
                             <div className="rounded-lg bg-gray-50 p-4 shadow-sm">
-                                <div className="flex items-center gap-2 font-semibold text-teal-700 mb-2">
+                                <div className="mb-2 flex items-center gap-2 font-semibold text-teal-700">
                                     <Building2 className="h-4 w-4" />
                                     Đơn vị vận hành
                                 </div>
-                                <p className="text-sm text-gray-700 whitespace-pre-line">
+                                <p className="whitespace-pre-line text-sm text-gray-700">
                                     {route.route_details.organization}
                                 </p>
                             </div>
@@ -278,11 +304,109 @@ const RouteDetail = ({ route }) => {
                     )}
                 </>
             )}
-            {activeSubtab === 'review' && (
-                <div className="text-sm text-gray-700">
-                    <p>Chức năng đánh giá sẽ sớm có mặt.</p>
-                </div>
-            )}
+            {activeSubtab === 'review' &&
+                (!reviewLoading ? (
+                    <>
+                        <div className="space-y-6 text-sm text-gray-800">
+                            <div className="flex items-center gap-4">
+                                <div className="text-4xl font-bold text-teal-600">
+                                    {averageReview?.average_rating || '—'}
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-1 text-yellow-500">
+                                        {Array.from({ length: 5 }, (_, i) => (
+                                            <StarIcon
+                                                key={i}
+                                                className={`h-4 w-4 ${i < averageReview?.average_rating.toFixed() ? 'fill-yellow-400' : 'fill-gray-300'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p className="text-xs text-gray-500">
+                                        {averageReview?.count_rating} đánh giá
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Review Form */}
+                            <div className="space-y-2 rounded-lg border bg-white p-4 shadow-sm">
+                                <h4 className="text-base font-semibold text-gray-800">
+                                    Gửi đánh giá
+                                </h4>
+                                <div className="flex items-center gap-2">
+                                    {Array.from({ length: 5 }, (_, i) => (
+                                        <StarIcon
+                                            key={i}
+                                            className="h-5 w-5 cursor-pointer text-yellow-400 transition hover:scale-110"
+                                        />
+                                    ))}
+                                </div>
+                                <textarea
+                                    rows={3}
+                                    placeholder="Viết nhận xét..."
+                                    className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
+                                />
+                                <button className="rounded bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">
+                                    Gửi đánh giá
+                                </button>
+                            </div>
+
+                            <div className="divide-y rounded-lg border bg-white shadow-sm">
+                                {reviewList?.data?.map((review) => (
+                                    <div key={review.id} className="p-4">
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-medium text-gray-800">
+                                                {review.user}
+                                            </span>
+                                            <span className="text-xs text-gray-500">
+                                                {review.created_at}
+                                            </span>
+                                        </div>
+
+                                        {/* Rating stars */}
+                                        <div className="my-1 flex items-center gap-1 text-yellow-500">
+                                            {Array.from(
+                                                { length: 5 },
+                                                (_, i) => (
+                                                    <StarIcon
+                                                        key={i}
+                                                        className={`h-4 w-4 ${i < review.rating ? 'fill-yellow-400' : 'fill-gray-300'}`}
+                                                    />
+                                                ),
+                                            )}
+                                        </div>
+
+                                        {/* Comment */}
+                                        <p className="text-gray-700">
+                                            {review.comment}
+                                        </p>
+                                    </div>
+                                ))}
+
+                                {/* No reviews fallback */}
+                                {reviewList?.data?.length === 0 && (
+                                    <div className="p-4 text-sm text-gray-500">
+                                        Chưa có đánh giá nào.
+                                    </div>
+                                )}
+                            </div>
+                            {reviewList?.links?.next && (
+                                <div className="flex justify-center">
+                                    <button
+                                        onClick={loadMoreReviews}
+                                        disabled={isLoadingMore}
+                                        className="rounded bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
+                                    >
+                                        {isLoadingMore ? 'Đang tải...' : 'Hiển thị thêm'}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <div className="rounded bg-white p-6 text-sm text-gray-700 shadow">
+                        <p>Chưa có đánh giá cho tuyến xe này.</p>
+                    </div>
+                ))}
         </div>
     );
 };
