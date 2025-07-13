@@ -11,8 +11,7 @@ import {
 
 const tabs = [
     { key: 'Info', label: 'Info', icon: Info },
-    { key: 'Legend', label: 'Legend', icon: List },
-    { key: 'Filters', label: 'Filters', icon: SlidersHorizontal },
+    { key: 'Filters', label: 'Search', icon: SlidersHorizontal },
 ];
 
 const Sidebar = ({
@@ -23,14 +22,13 @@ const Sidebar = ({
     activeTab,
     setActiveTab,
     infoData,
-    legendData,
     filtersData,
 }) => {
     const toggleOpen = () => setIsOpen(!isOpen);
     const toggleExpand = () => {
         const next = !isExpanded;
         setIsExpanded(next);
-        if (!next) setActiveTab('Info');
+        // if (!next) setActiveTab('Info');
     };
 
     const getContent = () => {
@@ -45,8 +43,6 @@ const Sidebar = ({
                         No feature selected.
                     </p>
                 );
-            case 'Legend':
-                return <div>{legendData || 'Legend content goes here'}</div>;
             case 'Filters':
                 return <FilterPanel listItems={filtersData} />;
             default:

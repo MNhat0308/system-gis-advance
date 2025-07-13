@@ -17,3 +17,27 @@ export const extractPointsFromStations = (stations = []) => {
         };
     });
 };
+
+export function getCircleFeature(center, radiusMeters) {
+    const steps = 64;
+    const coordinates = [];
+
+    for (let i = 0; i <= steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        const dx = radiusMeters * Math.cos(angle);
+        const dy = radiusMeters * Math.sin(angle);
+        const deltaLng = dx / (111320 * Math.cos(center[1] * Math.PI / 180));
+        const deltaLat = dy / 110540;
+        coordinates.push([center[0] + deltaLng, center[1] + deltaLat]);
+    }
+
+    return {
+        type: 'Feature',
+        geometry: {
+            type: 'Polygon',
+            coordinates: [coordinates],
+        },
+        properties: {},
+    };
+}
+

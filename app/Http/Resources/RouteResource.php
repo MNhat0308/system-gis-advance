@@ -23,6 +23,7 @@ class RouteResource extends JsonResource
             'code' => $this->code,
             'type' => $this->type,
             'route_variants' => RouteVariantResource::collection($this->whenLoaded('routeVariants')),
+            'route_details' => new RouteDetailResource($this->whenLoaded('routeDetails')),
         ];
     }
 

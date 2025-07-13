@@ -2,6 +2,7 @@ import '../css/app.css';
 import './bootstrap';
 
 import { AppProvider } from '@/Pages/Map/contexts/AppContext.jsx';
+import { FlashProvider } from '@/Pages/Map/contexts/FlashContext.jsx';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
@@ -19,9 +20,11 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <AppProvider>
-                <App {...props} />
-            </AppProvider>,
+            <FlashProvider>
+                <AppProvider>
+                    <App {...props} />
+                </AppProvider>
+            </FlashProvider>,
         );
     },
     progress: {
