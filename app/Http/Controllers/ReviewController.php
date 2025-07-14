@@ -75,4 +75,24 @@ class ReviewController extends Controller
             'count_rating' => $countRating,
         ]);
     }
+
+    public function storeRouteReview(Request $request, string $routeId)
+    {
+        $data = $request->validate([
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['required', 'string', 'min:5', 'max:500'],
+        ]);
+
+        $review = Review::create([
+            'user_id' => $request->user()->id,
+            'route_id' => $routeId,
+            'rating' => $data['rating'],
+            'comment' => $data['comment'],
+        ]);
+
+        return response()->json([
+            'message' => 'Review created successfully',
+            'data' => $review,
+        ], 201);
+    }
 }

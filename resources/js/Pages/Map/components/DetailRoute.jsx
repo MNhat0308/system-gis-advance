@@ -1,3 +1,4 @@
+import ReviewForm from '@/Pages/Map/components/ReviewForm.jsx';
 import { BASE_VIEW } from '@/Pages/Map/config/index.js';
 import { useAppContext } from '@/Pages/Map/contexts/AppContext.jsx';
 import { data_get } from '@/Utils/globalHelper.js';
@@ -23,8 +24,10 @@ const RouteDetail = ({ route }) => {
         reviewError,
         isLoadingMore,
         loadMoreReviews,
+        authUser,
+        setShowLoginModal,
     } = useAppContext();
-
+    const [ratingStar, setRatingStar] = useState(0);
     const [activeTab, setActiveTab] = useState(route.route_variants[0]?.id);
     const [activeSubtab, setActiveSubtab] = useState('stops');
 
@@ -327,28 +330,25 @@ const RouteDetail = ({ route }) => {
                                 </div>
                             </div>
 
-                            {/* Review Form */}
-                            <div className="space-y-2 rounded-lg border bg-white p-4 shadow-sm">
-                                <h4 className="text-base font-semibold text-gray-800">
-                                    Gửi đánh giá
-                                </h4>
-                                <div className="flex items-center gap-2">
-                                    {Array.from({ length: 5 }, (_, i) => (
-                                        <StarIcon
-                                            key={i}
-                                            className="h-5 w-5 cursor-pointer text-yellow-400 transition hover:scale-110"
-                                        />
-                                    ))}
+                            {authUser ? (
+                                <ReviewForm routeId={route.id} />
+                            ) : (
+                                <div className="rounded-lg border bg-white p-4 text-center text-sm text-gray-600 shadow-sm">
+                                    <p>
+                                        Bạn cần{' '}
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setShowLoginModal(true)
+                                            }
+                                            className="text-teal-600 hover:underline"
+                                        >
+                                            đăng nhập
+                                        </button>{' '}
+                                        để gửi đánh giá.
+                                    </p>
                                 </div>
-                                <textarea
-                                    rows={3}
-                                    placeholder="Viết nhận xét..."
-                                    className="w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                />
-                                <button className="rounded bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">
-                                    Gửi đánh giá
-                                </button>
-                            </div>
+                            )}
 
                             <div className="divide-y rounded-lg border bg-white shadow-sm">
                                 {reviewList?.data?.map((review) => (
@@ -362,7 +362,6 @@ const RouteDetail = ({ route }) => {
                                             </span>
                                         </div>
 
-                                        {/* Rating stars */}
                                         <div className="my-1 flex items-center gap-1 text-yellow-500">
                                             {Array.from(
                                                 { length: 5 },
@@ -375,14 +374,12 @@ const RouteDetail = ({ route }) => {
                                             )}
                                         </div>
 
-                                        {/* Comment */}
                                         <p className="text-gray-700">
                                             {review.comment}
                                         </p>
                                     </div>
                                 ))}
 
-                                {/* No reviews fallback */}
                                 {reviewList?.data?.length === 0 && (
                                     <div className="p-4 text-sm text-gray-500">
                                         Chưa có đánh giá nào.
@@ -396,7 +393,9 @@ const RouteDetail = ({ route }) => {
                                         disabled={isLoadingMore}
                                         className="rounded bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
                                     >
-                                        {isLoadingMore ? 'Đang tải...' : 'Hiển thị thêm'}
+                                        {isLoadingMore
+                                            ? 'Đang tải...'
+                                            : 'Hiển thị thêm'}
                                     </button>
                                 </div>
                             )}

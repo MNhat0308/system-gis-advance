@@ -15,8 +15,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Map } from 'react-map-gl/mapbox';
 import MapContextMenu from '@/Pages/Map/components/MapContextMenu.jsx';
+import LoginModal from '@/Pages/Map/components/LoginModal.jsx';
 
-export default function BusMap({ routes }) {
+export default function BusMap({ routes, user_login }) {
     const { showFlash } = useFlash();
     const {
         selectedVariant,
@@ -41,6 +42,9 @@ export default function BusMap({ routes }) {
         setMapLoaded,
         setContextMenu,
         contextMenu,
+        setAuthUser,
+        showLoginModal,
+        setShowLoginModal
     } = useAppContext();
     const [hoveredFeatureId, setHoveredFeatureId] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -54,6 +58,11 @@ export default function BusMap({ routes }) {
         setListRoutes(routes);
     }, [routes]);
 
+    useEffect(() => {
+        if (user_login) {
+            setAuthUser(user_login);
+        }
+    }, [user_login]);
     useEffect(() => {
         const handleContextMenu = (e) => {
             e.preventDefault(); // 🛑 Stop the browser menu
@@ -262,6 +271,16 @@ export default function BusMap({ routes }) {
                 )}
                 <GpsButton onLocate={handleLocate} />
             </div>
+
+            {showLoginModal && (
+                <LoginModal
+                    onClose={() => setShowLoginModal(false)}
+                    onSuccess={() => {
+                        // optional: refresh page, refetch data, or show success message
+                    }}
+                />
+            )}
+
         </>
     );
 }
