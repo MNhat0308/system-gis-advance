@@ -43,4 +43,9 @@ class Route extends Model
     {
         return $this->hasOne(DetailRoute::class);
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
 }

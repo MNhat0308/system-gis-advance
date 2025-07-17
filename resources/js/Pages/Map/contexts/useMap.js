@@ -1,6 +1,5 @@
 import { BASE_VIEW } from '@/Pages/Map/config/index.js';
 import { useState } from 'react';
-
 export default function useMap() {
     const [baseMapStyle, setBaseMapStyle] = useState(
         'mapbox://styles/mapbox/light-v11',

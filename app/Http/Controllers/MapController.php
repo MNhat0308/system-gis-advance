@@ -7,6 +7,7 @@ use App\Http\Resources\RouteResource;
 use App\Models\Route;
 use App\Models\RouteVariant;
 use App\Models\Station;
+use Auth;
 use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,6 +20,7 @@ class MapController extends Controller
 
         return Inertia::render('Map/BusMap', [
             'routes' => $routes->map->only(['id', 'name', 'code', 'type']),
+            'user_login' => Auth::user(),
         ]);
 
     }

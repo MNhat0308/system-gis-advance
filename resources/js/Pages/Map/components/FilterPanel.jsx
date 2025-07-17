@@ -283,7 +283,7 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                                 onClick={handleBackToList}
                                 className="mb-4 rounded bg-gray-200 px-4 py-2 text-sm text-gray-800 hover:bg-gray-300"
                             >
-                                ← Back to List
+                                ← Trở lại
                             </button>
                         </div>
 
@@ -296,26 +296,23 @@ const FilterPanel = ({ initialFilters = {}, listItems = [] }) => {
                 ) : (
                     <>
                         <h3 className="mb-3 flex items-center justify-between text-base font-semibold text-gray-700">
-                            <span>Matching Results</span>
+                            <span>Kết quả phù hợp</span>
                             <span className="text-sm font-normal text-gray-500">
-                                {filteredItems.length} result
-                                {filteredItems.length !== 1 && 's'}
+                                {filteredItems.length} kết quả
                             </span>
                         </h3>
 
-                        {/* Search input */}
                         <div className="relative mb-4">
                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Search by name, code, or type..."
+                                placeholder="Tìm kiếm..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full rounded border border-gray-300 bg-white px-9 py-2 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                         </div>
 
-                        {/* Filtered results */}
                         {filteredItems.length > 0 ? (
                             <div className="cursor-pointer space-y-3">
                                 {filteredItems.map((item) => (

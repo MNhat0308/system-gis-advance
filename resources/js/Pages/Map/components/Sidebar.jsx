@@ -10,8 +10,8 @@ import {
 } from 'lucide-react';
 
 const tabs = [
-    { key: 'Info', label: 'Info', icon: Info },
-    { key: 'Filters', label: 'Search', icon: SlidersHorizontal },
+    { key: 'Info', label: 'Thông tin', icon: Info },
+    { key: 'Filters', label: 'Tra cứu', icon: SlidersHorizontal },
 ];
 
 const Sidebar = ({
@@ -40,7 +40,7 @@ const Sidebar = ({
                     </pre>
                 ) : (
                     <p className="text-sm text-gray-500">
-                        No feature selected.
+                        Không có thông tin nào để hiển thị.
                     </p>
                 );
             case 'Filters':
@@ -52,7 +52,6 @@ const Sidebar = ({
 
     return (
         <>
-            {/* Collapsed menu button */}
             {!isOpen && (
                 <div className="group absolute left-4 top-4 z-50">
                     <button
@@ -74,7 +73,7 @@ const Sidebar = ({
                 {/* Header */}
                 <div className="flex items-center justify-between border-b p-2">
                     {isExpanded && (
-                        <h2 className="text-base font-semibold">Information</h2>
+                        <h2 className="text-base font-semibold">Thông tin</h2>
                     )}
 
                     <div className="ml-auto flex gap-2">
@@ -127,7 +126,6 @@ const Sidebar = ({
                                     )}
                                 </button>
 
-                                {/* Tooltip when collapsed */}
                                 {!isExpanded && (
                                     <div className="pointer-events-none absolute left-full top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white opacity-0 shadow transition-opacity duration-200 group-hover:opacity-100">
                                         {label}
@@ -138,7 +136,6 @@ const Sidebar = ({
                     })}
                 </div>
 
-                {/* Content */}
                 {isExpanded && (
                     <div className="flex-1 overflow-y-auto p-3">
                         {getContent()}
