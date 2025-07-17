@@ -4,8 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReviewResource\Pages;
 use App\Models\Review;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -28,46 +31,77 @@ class ReviewResource extends Resource
 
     protected static ?string $slug = 'reviews';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                TextInput::make('user_id')
-                    ->integer(),
+        return $form->schema([
+            Section::make('Review Details')
+                ->schema([
+                    Grid::make(2)
+                        ->schema([
+                            Select::make('user_id')
+                                ->label('User')
+                                ->relationship('user', 'name') // requires relation in model
+                                ->searchable()
+                                ->required(),
 
-                TextInput::make('route_id')
-                    ->required()
-                    ->integer(),
+                            Select::make('route_id')
+                                ->label('Route')
+                                ->relationship('route', 'name')
+                                ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->name} _ {$record->code}")
+                                ->searchable()
+                                ->required(),
+                        ]),
 
-                TextInput::make('rating')
-                    ->required()
-                    ->integer(),
+                    Select::make('rating')
+                        ->label('Rating')
+                        ->required()
+                        ->options([
+                            1 => '⭐☆☆☆☆',
+                            2 => '⭐⭐☆☆☆',
+                            3 => '⭐⭐⭐☆☆',
+                            4 => '⭐⭐⭐⭐☆',
+                            5 => '⭐⭐⭐⭐⭐',
+                        ]),
 
-                TextInput::make('comment'),
+                    Textarea::make('comment')
+                        ->label('Comment')
+                        ->rows(4)
+                        ->maxLength(500)
+                        ->nullable(),
+                ]),
 
-                Placeholder::make('created_at')
-                    ->label('Created Date')
-                    ->content(fn(?Review $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+            Section::make('Metadata')
+                ->collapsed()
+                ->schema([
+                    Grid::make(2)
+                        ->schema([
+                            Placeholder::make('created_at')
+                                ->label('Created')
+                                ->content(fn(?Review $record): string => $record?->created_at?->diffForHumans() ?? '-'),
 
-                Placeholder::make('updated_at')
-                    ->label('Last Modified Date')
-                    ->content(fn(?Review $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
-            ]);
+                            Placeholder::make('updated_at')
+                                ->label('Last Modified')
+                                ->content(fn(?Review $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                        ]),
+                ]),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('user_id'),
-
-                TextColumn::make('route_id'),
-
-                TextColumn::make('rating'),
-
-                TextColumn::make('comment'),
+                TextColumn::make('user.name')->label('User name')->sortable(),
+                TextColumn::make('route.name')->label('Route name')->sortable(),
+                TextColumn::make('rating')
+                    ->label('Rating')
+                    ->html()
+                    ->formatStateUsing(function ($state) {
+                        return str_repeat('⭐', (int)$state);
+                    }),
+                TextColumn::make('comment')->limit(50),
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -92,20 +126,19 @@ class ReviewResource extends Resource
         return [
             'index' => Pages\ListReviews::route('/'),
             'create' => Pages\CreateReview::route('/create'),
-            'edit' => Pages\EditReview::route('/{record}/edit'),
+//            'edit' => Pages\EditReview::route('/{record}/edit'),
         ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery()->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
     }
 
     public static function getGloballySearchableAttributes(): array
     {
-        return [];
+        return ['comment'];
     }
 }

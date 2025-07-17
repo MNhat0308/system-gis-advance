@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\RouteVariant;
+use App\Models\Review;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RouteVariantPolicy
+class ReviewPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class RouteVariantPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_route::variant');
+        return $user->can('view_any_review');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, RouteVariant $routeVariant): bool
+    public function view(User $user, Review $review): bool
     {
-        return $user->can('view_route::variant');
+        return $user->can('view_review');
     }
 
     /**
@@ -31,23 +31,23 @@ class RouteVariantPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_route::variant');
+        return $user->can('create_review');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, RouteVariant $routeVariant): bool
+    public function update(User $user, Review $review): bool
     {
-        return $user->can('update_route::variant');
+        return $user->can('update_review');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, RouteVariant $routeVariant): bool
+    public function delete(User $user, Review $review): bool
     {
-        return $user->can('delete_route::variant');
+        return $user->can('delete_review');
     }
 
     /**
@@ -55,15 +55,15 @@ class RouteVariantPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_route::variant');
+        return $user->can('delete_any_review');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, RouteVariant $routeVariant): bool
+    public function forceDelete(User $user, Review $review): bool
     {
-        return $user->can('force_delete_route::variant');
+        return $user->can('force_delete_review');
     }
 
     /**
@@ -71,15 +71,15 @@ class RouteVariantPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_route::variant');
+        return $user->can('force_delete_any_review');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, RouteVariant $routeVariant): bool
+    public function restore(User $user, Review $review): bool
     {
-        return $user->can('restore_route::variant');
+        return $user->can('restore_review');
     }
 
     /**
@@ -87,15 +87,15 @@ class RouteVariantPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_route::variant');
+        return $user->can('restore_any_review');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, RouteVariant $routeVariant): bool
+    public function replicate(User $user, Review $review): bool
     {
-        return $user->can('replicate_route::variant');
+        return $user->can('replicate_review');
     }
 
     /**
@@ -103,6 +103,6 @@ class RouteVariantPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_route::variant');
+        return $user->can('reorder_review');
     }
 }

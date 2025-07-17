@@ -30,6 +30,18 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                <NavLink
+                                    href={route(
+                                        'filament.admin.pages.dashboard',
+                                    )}
+                                    active={route().current(
+                                        'filament.admin.pages.dashboard',
+                                    )}
+                                    target="_blank"
+                                >
+                                    Manager
+                                </NavLink>
                             </div>
                         </div>
 
